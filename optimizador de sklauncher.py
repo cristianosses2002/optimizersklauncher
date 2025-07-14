@@ -144,7 +144,7 @@ class SKlauncherOptimizer:
     def mostrar_informacion_sistema(self):
         """Muestra información del sistema"""
         print("=" * 50)
-        print("🖥️  INFORMACIÓN DEL SISTEMA")
+        print("INFORMACIÓN DEL SISTEMA")
         print("=" * 50)
         print(f"Sistema Operativo: {platform.system()} {platform.release()}")
         print(f"Arquitectura: {platform.architecture()[0]}")
@@ -162,66 +162,52 @@ class SKlauncherOptimizer:
         params, ram_asignada, java_version = self.obtener_parametros_optimizados()
         
         self.mostrar_informacion_sistema()
-        
-        print("🚀 CONFIGURACIÓN OPTIMIZADA")
+        print("CONFIGURACIÓN OPTIMIZADA")
         print("=" * 50)
         print(f"Versión de Java: {java_version}")
         print(f"RAM Asignada: {ram_asignada} MB ({ram_asignada/1024:.1f} GB)")
         print(f"Garbage Collector: G1GC")
         print(f"Optimizaciones: Activadas (compatibles con Java {java_version})")
         print()
-        
         if mostrar_comando:
-            print("📋 COMANDO COMPLETO:")
+            print("COMANDO COMPLETO:")
             print("=" * 50)
             comando_str = " ".join(f'"{param}"' if " " in param else param for param in params)
             print(comando_str)
             print()
-        
         try:
-            print("🎮 Iniciando SKlauncher optimizado...")
+            print("Iniciando SKlauncher optimizado...")
             print("=" * 50)
-            
-            # Ejecutar el comando sin ocultar la ventana
             proceso = subprocess.Popen(
                 params,
                 cwd=os.path.dirname(self.jar_path)
             )
-            
-            print(f"✅ SKlauncher iniciado (PID: {proceso.pid})")
+            print(f"SKlauncher iniciado (PID: {proceso.pid})")
             print("Esperando a que se abra la ventana...")
-            
-            # Esperar un poco para ver si el proceso sigue ejecutándose
             import time
             time.sleep(3)
-            
             if proceso.poll() is None:
-                print("✅ SKlauncher se está ejecutando correctamente")
-                print("💡 Si no ves la ventana, revisa la barra de tareas")
+                print("SKlauncher se está ejecutando correctamente")
+                print("Si no ves la ventana, revisa la barra de tareas")
             else:
-                print("❌ SKlauncher se cerró inesperadamente")
+                print("SKlauncher se cerró inesperadamente")
                 print("Revisando errores...")
-                
-                # Capturar errores si los hay
                 try:
                     stdout, stderr = proceso.communicate(timeout=5)
                     if stderr:
                         print(f"Error capturado: {stderr.decode('utf-8', errors='ignore')}")
                 except:
                     pass
-                    
                 return False
-            
             return True
-            
         except subprocess.CalledProcessError as e:
-            print(f"❌ Error al ejecutar SKlauncher: {e}")
+            print(f"Error al ejecutar SKlauncher: {e}")
             return False
         except KeyboardInterrupt:
-            print("\n⏹️  Proceso interrumpido por el usuario")
+            print("\nProceso interrumpido por el usuario")
             return False
         except Exception as e:
-            print(f"❌ Error inesperado: {e}")
+            print(f"Error inesperado: {e}")
             return False
     
     def ejecutar_con_debug(self):
@@ -231,7 +217,7 @@ class SKlauncherOptimizer:
             
         params, ram_asignada, java_version = self.obtener_parametros_optimizados()
         
-        print("🔍 MODO DEBUG - DIAGNÓSTICO COMPLETO")
+        print("MODO DEBUG - DIAGNÓSTICO COMPLETO")
         print("=" * 50)
         
         # Verificar versión de Java
@@ -253,7 +239,7 @@ class SKlauncherOptimizer:
         print(f"Tamaño del JAR: {jar_size:.1f} MB")
         
         # Intentar ejecución con salida visible
-        print("\n🚀 Ejecutando con salida completa...")
+        print("\nEjecutando con salida completa...")
         print("=" * 50)
         
         try:
@@ -271,67 +257,62 @@ class SKlauncherOptimizer:
             print(f"Código de salida: {resultado.returncode}")
             
             if resultado.stdout:
-                print("\n📋 SALIDA ESTÁNDAR:")
+                print("\nSALIDA ESTÁNDAR:")
                 print(resultado.stdout)
             
             if resultado.stderr:
-                print("\n⚠️ ERRORES/ADVERTENCIAS:")
+                print("\nERRORES/ADVERTENCIAS:")
                 print(resultado.stderr)
             
             if resultado.returncode == 0:
-                print("\n✅ El comando se ejecutó sin errores")
+                print("\nEl comando se ejecutó sin errores")
             else:
-                print(f"\n❌ El comando falló con código: {resultado.returncode}")
+                print(f"\nEl comando falló con código: {resultado.returncode}")
                 
         except subprocess.TimeoutExpired:
-            print("⏱️ El proceso tardó más de 30 segundos, puede estar funcionando")
+            print("El proceso tardó más de 30 segundos, puede estar funcionando")
         except Exception as e:
-            print(f"❌ Error durante la ejecución: {e}")
+            print(f"Error durante la ejecución: {e}")
             
         return True
+
+    def generar_bat(self):
         """Genera un archivo .bat para Windows con la configuración optimizada"""
-        params, ram_asignada = self.obtener_parametros_optimizados()
-        
-        # Crear el contenido del archivo .bat
+        params, ram_asignada, _ = self.obtener_parametros_optimizados()
         bat_content = f"""@echo off
-title SKlauncher Optimizado - {ram_asignada}MB RAM
-echo ======================================
-echo    SKlauncher Optimizado
-echo    RAM Asignada: {ram_asignada}MB
-echo ======================================
-echo.
-echo Iniciando SKlauncher...
-echo.
-
-cd /d "C:\\Users\\osses\\AppData\\Roaming\\sklauncher"
-
-"{self.java_path}" {' '.join(params[1:])}
-
-if errorlevel 1 (
-    echo.
-    echo Error al iniciar SKlauncher
-    pause
-) else (
-    echo.
-    echo SKlauncher cerrado correctamente
-)
-"""
-        
-        # Guardar el archivo .bat
+        title SKlauncher Optimizado - {ram_asignada}MB RAM
+        echo ======================================
+        echo    SKlauncher Optimizado
+        echo    RAM Asignada: {ram_asignada}MB
+        echo ======================================
+        echo.
+        echo Iniciando SKlauncher...
+        echo.
+        cd /d \"C:\\Users\\osses\\AppData\\Roaming\\sklauncher\"
+        \"{self.java_path}\" {' '.join(params[1:])}
+        if errorlevel 1 (
+            echo.
+            echo Error al iniciar SKlauncher
+            pause
+        ) else (
+            echo.
+            echo SKlauncher cerrado correctamente
+        )
+        """
         bat_path = "sklauncher_optimizado.bat"
         try:
             with open(bat_path, 'w', encoding='utf-8') as f:
                 f.write(bat_content)
-            print(f"✅ Archivo .bat generado: {os.path.abspath(bat_path)}")
+            print(f"Archivo .bat generado: {os.path.abspath(bat_path)}")
             print("Puedes usar este archivo para iniciar SKlauncher optimizado")
             return True
         except Exception as e:
-            print(f"❌ Error al generar archivo .bat: {e}")
+            print(f"Error al generar archivo .bat: {e}")
             return False
 
 def main():
     """Función principal"""
-    print("🎮 OPTIMIZADOR DE SKLAUNCHER")
+    print("OPTIMIZADOR DE SKLAUNCHER")
     print("=" * 50)
     
     optimizer = SKlauncherOptimizer()
